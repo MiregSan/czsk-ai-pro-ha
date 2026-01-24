@@ -88,6 +88,6 @@ echo "  IP Address:    $CTIP"
 echo "  Password:      $ROOT_PASSWORD"
 echo
 echo "💬 To start chatting, connect via SSH and run:"
-echo "  ollama run llama3.1:3b"
+echo "  ollama run llama3.1:8b"
 echo
 echo
