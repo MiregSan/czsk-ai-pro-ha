@@ -2,8 +2,8 @@
 set -e
 
 echo "╔════════════════════════════════════════╗"
-echo "║  🚀 Fast Ollama LXC Setup v1.0         ║"
-echo "║  Optimized for Home Assistant          ║"
+echo "║   🚀 Fast Ollama LXC Setup v1.1        ║"
+echo "║   Optimized for CZ/SK Community        ║"
 echo "╚════════════════════════════════════════╝"
 echo
 
@@ -13,6 +13,14 @@ ROOT_PASSWORD="ollama123"
 RAM_GB=8
 DISK_GB=20
 TEMPLATE="debian-12-standard_12.12-1_amd64.tar.zst"
+
+# Automatická detekce úložiště (hledá kde je povoleno ukládat kontejnery)
+STORAGE=$(pvesm status -content rootdir | awk 'NR>1 {print $1}' | head -n 1)
+if [ -z "$STORAGE" ]; then
+    STORAGE="local-lvm" # Fallback pokud detekce selže
+fi
+
+echo "📦 Using storage: $STORAGE"
 
 echo "📦 Installing Proxmox dependencies..."
 apt update 2>/dev/null || true
@@ -24,25 +32,25 @@ if [ ! -f "/var/lib/vz/template/cache/$TEMPLATE" ]; then
 fi
 
 echo "📦 Creating LXC container..."
+# Pokud už kontejner existuje, skript se zastaví s chybou (bezpečnost)
+if pct status $CTID >/dev/null 2>&1; then
+    echo "❌ Error: Container ID $CTID already exists!"
+    exit 1
+fi
+
 pct create $CTID local:vztmpl/$TEMPLATE \
     --hostname $HOSTNAME \
     --password $ROOT_PASSWORD \
     --memory $((RAM_GB * 1024)) \
     --swap 2048 \
     --cores 4 \
-    --rootfs local-lvm:$DISK_GB \
+    --rootfs ${STORAGE}:${DISK_GB} \
     --net0 name=eth0,bridge=vmbr0,ip=dhcp \
     --features nesting=1 \
     --unprivileged 0 \
     --onboot 1
 
-echo "🎮 Adding GPU passthrough..."
-echo "" >> /etc/pve/lxc/${CTID}.conf
-echo "# GPU Passthrough" >> /etc/pve/lxc/${CTID}.conf
-echo "lxc.cgroup2.devices.allow: c 226:* rwm" >> /etc/pve/lxc/${CTID}.conf
-echo "lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir" >> /etc/pve/lxc/${CTID}.conf
-
-echo "▶️  Starting container..."
+echo "▶️ Starting container..."
 pct start $CTID
 sleep 10
 
@@ -52,42 +60,34 @@ pct exec $CTID -- bash -c "apt update && apt install -y curl zstd jq pciutils"
 echo "🤖 Installing Ollama..."
 pct exec $CTID -- bash -c "curl -fsSL https://ollama.com/install.sh | sh"
 
-echo "⚙️  Configuring Ollama..."
+echo "⚙️ Configuring Ollama..."
 pct exec $CTID -- mkdir -p /etc/systemd/system/ollama.service.d
 pct exec $CTID -- bash -c 'echo "[Service]" > /etc/systemd/system/ollama.service.d/override.conf'
 pct exec $CTID -- bash -c 'echo "Environment=\"OLLAMA_KEEP_ALIVE=24h\"" >> /etc/systemd/system/ollama.service.d/override.conf'
 pct exec $CTID -- bash -c 'echo "Environment=\"OLLAMA_HOST=0.0.0.0:11434\"" >> /etc/systemd/system/ollama.service.d/override.conf'
-pct exec $CTID -- bash -c 'echo "Environment=\"OLLAMA_VULKAN=1\"" >> /etc/systemd/system/ollama.service.d/override.conf'
 
 pct exec $CTID -- systemctl daemon-reload
 pct exec $CTID -- systemctl restart ollama
 sleep 5
 
-echo "📥 Downloading llama3.2:8b model..."
-pct exec $CTID -- ollama pull llama3.2:8b
+echo "📥 Downloading llama3.2:3b model..."
+pct exec $CTID -- ollama pull llama3.2:3b
 
 echo "🔍 Getting container IP..."
 sleep 2
 CTIP=$(pct exec $CTID -- hostname -I | awk '{print $1}')
 
-echo "🧪 Testing response time..."
-pct exec $CTID -- bash -c 'time curl -s -X POST http://localhost:11434/v1/chat/completions -H "Content-Type: application/json" -d "{\"model\":\"llama3.2:3b\",\"messages\":[{\"role\":\"user\",\"content\":\"test\"}],\"stream\":false}" | jq -r ".choices[0].message.content"' 2>&1 | grep real
-
 echo
 echo "╔════════════════════════════════════════╗"
-echo "║  ✅ Installation Complete!            ║"
+echo "║   ✅ Installation Complete!            ║"
 echo "╚════════════════════════════════════════╝"
 echo
 echo "📋 Container Details:"
 echo "  Container ID:  $CTID"
-echo "  Hostname:      $HOSTNAME"  
 echo "  IP Address:    $CTIP"
-echo "  Username:      root"
 echo "  Password:      $ROOT_PASSWORD"
 echo
-echo "🔗 Ollama API: http://$CTIP:11434"
+echo "💬 To start chatting, connect via SSH and run:"
+echo "  ollama run llama3.2:3b"
 echo
-echo "🏠 For Home Assistant:"
-echo "  URL: http://$CTIP:11434"
-echo "  Model: llama3.2:3b"
 echo
