@@ -70,8 +70,8 @@ pct exec $CTID -- systemctl daemon-reload
 pct exec $CTID -- systemctl restart ollama
 sleep 5
 
-echo "📥 Downloading llama3.2:3b model..."
-pct exec $CTID -- ollama pull llama3.2:3b
+echo "📥 Downloading llama3.1:8b model..."
+pct exec $CTID -- ollama pull llama3.1:8b
 
 echo "🔍 Getting container IP..."
 sleep 2
@@ -88,6 +88,6 @@ echo "  IP Address:    $CTIP"
 echo "  Password:      $ROOT_PASSWORD"
 echo
 echo "💬 To start chatting, connect via SSH and run:"
-echo "  ollama run llama3.2:3b"
+echo "  ollama run llama3.1:3b"
 echo
 echo
