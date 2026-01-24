@@ -63,8 +63,8 @@ pct exec $CTID -- systemctl daemon-reload
 pct exec $CTID -- systemctl restart ollama
 sleep 5
 
-echo "📥 Downloading llama3.2:3b model..."
-pct exec $CTID -- ollama pull llama3.2:3b
+echo "📥 Downloading llama3.2:8b model..."
+pct exec $CTID -- ollama pull llama3.2:8b
 
 echo "🔍 Getting container IP..."
 sleep 2
