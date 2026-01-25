@@ -1,0 +1,122 @@
+SVETLA
+
+service: light.turn_on
+target:
+  entity_id: light.svetlo_strop_kuchyn
+  
+service: light.turn_on
+target:
+  entity_id: light.svetlo_strop_kuchyn
+data:
+  brightness_pct: 50
+
+service: light.turn_off
+target:
+  entity_id: light.svetlo_strop_kuchyn
+  
+TOPENI
+
+service: climate.set_temperature
+target:
+  entity_id: climate.kuchyn_topeni
+data:
+  temperature: 19
+  
+service: climate.set_hvac_mode
+target:
+  entity_id: climate.kuchyn_topeni
+data:
+  hvac_mode: heat
+ 
+service: climate.set_hvac_mode
+target:
+  entity_id: climate.kuchyn_topeni
+data:
+  hvac_mode: "off"
+
+
+COVERS
+
+service: cover.open_cover
+target:
+  entity_id: cover.kuchyn_zaluzie
+  
+service: cover.close_cover
+target:
+  entity_id: cover.kuchyn_zaluzie
+  
+service: cover.set_cover_position
+target:
+  entity_id: cover.kuchyn_zaluzie
+data:
+  position: 50
+  
+service: cover.stop_cover
+target:
+  entity_id: cover.kuchyn_zaluzie
+  
+SWITCH
+
+service: switch.turn_on
+target:
+  entity_id: switch.vrata_garaz
+  
+service: switch.turn_off
+target:
+  entity_id: switch.vrata_garaz
+  
+service: switch.toggle
+target:
+  entity_id: switch.vrata_garaz
+  
+FAN
+
+service: fan.turn_on
+target:
+  entity_id: fan.ventilator_obyvak
+  
+service: fan.turn_on
+target:
+  entity_id: fan.ventilator_obyvak
+data:
+  percentage: 75
+  
+service: fan.set_percentage
+target:
+  entity_id: fan.ventilator_obyvak
+data:
+  percentage: 50
+  
+service: fan.turn_off
+target:
+  entity_id: fan.ventilator_obyvak
+  
+INPUT BOOLEAN
+
+service: input_boolean.turn_on
+target:
+  entity_id: input_boolean.bojler
+
+service: input_boolean.turn_off
+target:
+  entity_id: input_boolean.bojler
+  
+service: input_boolean.toggle
+target:
+  entity_id: input_boolean.bojler
+  
+INPUT_NUMBER
+
+service: input_number.set_value
+target:
+  entity_id: input_number.bojler_teplota
+data:
+  value: 40
+
+service: input_number.increment
+target:
+  entity_id: input_number.bojler_teplota
+  
+service: input_number.decrement
+target:
+  entity_id: input_number.bojler_teplota
