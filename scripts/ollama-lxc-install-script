@@ -2,41 +2,77 @@
 set -e
 
 echo "╔════════════════════════════════════════╗"
-echo "║   🚀 Fast Ollama LXC Setup v1.1        ║"
+echo "║   🚀 Fast Ollama LXC Setup v1.2        ║"
 echo "║   Optimized for CZ/SK Community        ║"
 echo "╚════════════════════════════════════════╝"
 echo
 
-CTID=103
+# ============================================
+# KONFIGURACE
+# ============================================
+
 HOSTNAME="ollama-lxc"
 ROOT_PASSWORD="ollama123"
 RAM_GB=8
 DISK_GB=20
 TEMPLATE="debian-12-standard_12.12-1_amd64.tar.zst"
 
-# Automatická detekce úložiště (hledá kde je povoleno ukládat kontejnery)
+# ============================================
+# AUTO-DETEKCE VOLNÉHO CTID
+# ============================================
+
+echo "🔍 Hledám volné Container ID..."
+CTID=100
+while pct status $CTID >/dev/null 2>&1; do
+    CTID=$((CTID + 1))
+    if [ $CTID -gt 999 ]; then
+        echo "❌ Error: No free Container ID found (100-999)!"
+        exit 1
+    fi
+done
+echo "✅ Found free CTID: $CTID"
+
+# ============================================
+# AUTO-DETEKCE STORAGE
+# ============================================
+
+echo "🔍 Detecting storage..."
 STORAGE=$(pvesm status -content rootdir | awk 'NR>1 {print $1}' | head -n 1)
 if [ -z "$STORAGE" ]; then
-    STORAGE="local-lvm" # Fallback pokud detekce selže
+    STORAGE="local-lvm"
 fi
+echo "✅ Using storage: $STORAGE"
 
-echo "📦 Using storage: $STORAGE"
+# ============================================
+# INSTALACE DEPENDENCIES
+# ============================================
 
+echo
 echo "📦 Installing Proxmox dependencies..."
 apt update 2>/dev/null || true
 apt install -y zstd curl wget 2>/dev/null || true
+
+# ============================================
+# STAŽENÍ TEMPLATE
+# ============================================
 
 if [ ! -f "/var/lib/vz/template/cache/$TEMPLATE" ]; then
     echo "📥 Downloading Debian 12 template..."
     pveam download local $TEMPLATE
 fi
 
+# ============================================
+# VYTVOŘENÍ LXC
+# ============================================
+
+echo
 echo "📦 Creating LXC container..."
-# Pokud už kontejner existuje, skript se zastaví s chybou (bezpečnost)
-if pct status $CTID >/dev/null 2>&1; then
-    echo "❌ Error: Container ID $CTID already exists!"
-    exit 1
-fi
+echo "  CTID:     $CTID"
+echo "  Hostname: $HOSTNAME"
+echo "  RAM:      ${RAM_GB}GB"
+echo "  Disk:     ${DISK_GB}GB"
+echo "  Storage:  $STORAGE"
+echo
 
 pct create $CTID local:vztmpl/$TEMPLATE \
     --hostname $HOSTNAME \
@@ -54,6 +90,10 @@ echo "▶️ Starting container..."
 pct start $CTID
 sleep 10
 
+# ============================================
+# INSTALACE V KONTEJNERU
+# ============================================
+
 echo "🔧 Installing system tools..."
 pct exec $CTID -- bash -c "apt update && apt install -y curl zstd jq pciutils"
 
@@ -62,20 +102,38 @@ pct exec $CTID -- bash -c "curl -fsSL https://ollama.com/install.sh | sh"
 
 echo "⚙️ Configuring Ollama..."
 pct exec $CTID -- mkdir -p /etc/systemd/system/ollama.service.d
-pct exec $CTID -- bash -c 'echo "[Service]" > /etc/systemd/system/ollama.service.d/override.conf'
-pct exec $CTID -- bash -c 'echo "Environment=\"OLLAMA_KEEP_ALIVE=24h\"" >> /etc/systemd/system/ollama.service.d/override.conf'
-pct exec $CTID -- bash -c 'echo "Environment=\"OLLAMA_HOST=0.0.0.0:11434\"" >> /etc/systemd/system/ollama.service.d/override.conf'
+pct exec $CTID -- bash -c 'cat > /etc/systemd/system/ollama.service.d/override.conf <<EOF
+[Service]
+Environment="OLLAMA_KEEP_ALIVE=24h"
+Environment="OLLAMA_HOST=0.0.0.0:11434"
+EOF'
 
 pct exec $CTID -- systemctl daemon-reload
 pct exec $CTID -- systemctl restart ollama
 sleep 5
 
-echo "📥 Downloading llama3.1:8b model..."
-pct exec $CTID -- ollama pull llama3.1:8b
+# ============================================
+# STAŽENÍ MODELU
+# ============================================
 
+echo
+echo "📥 Downloading llama3.1:8b model..."
+echo "⏳ This may take several minutes..."
+pct exec $CTID -- ollama pull llama3.1:8b
+echo "✅ Model downloaded successfully"
+
+# ============================================
+# ZÍSKÁNÍ IP ADRESY
+# ============================================
+
+echo
 echo "🔍 Getting container IP..."
 sleep 2
 CTIP=$(pct exec $CTID -- hostname -I | awk '{print $1}')
+
+# ============================================
+# ZÁVĚR
+# ============================================
 
 echo
 echo "╔════════════════════════════════════════╗"
@@ -84,10 +142,23 @@ echo "╚═══════════════════════�
 echo
 echo "📋 Container Details:"
 echo "  Container ID:  $CTID"
+echo "  Hostname:      $HOSTNAME"
 echo "  IP Address:    $CTIP"
 echo "  Password:      $ROOT_PASSWORD"
+echo "  Model:         llama3.1:8b"
 echo
-echo "💬 To start chatting, connect via SSH and run:"
-echo "  ollama run llama3.1:8b"
+echo "🌐 Ollama API Endpoint:"
+echo "  http://$CTIP:11434"
 echo
+echo "💬 To start chatting:"
+echo "  1. Connect via SSH: ssh root@$CTIP"
+echo "  2. Run: ollama run llama3.1:8b"
+echo
+echo "🔧 To access container shell from Proxmox:"
+echo "  pct enter $CTID"
+echo
+echo "📚 Model Management:"
+echo "  List models:    ollama list"
+echo "  Delete model:   ollama rm llama3.1:8b"
+echo "  Download model: ollama pull llama3.2:3b"
 echo
