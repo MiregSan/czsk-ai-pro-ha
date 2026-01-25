@@ -1,0 +1,428 @@
+{
+  "light": {
+    "turn_on": {
+      "service": "light.turn_on",
+      "target_domain": "light",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Základní zapnutí bez parametrů"
+        },
+        {
+          "id": "brightness",
+          "params": {
+            "brightness_pct": {
+              "type": "choice",
+              "values": [
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          },
+          "description": "Zapnutí s konkrétní intenzitou"
+        },
+        {
+          "id": "brightness_relative_increase",
+          "params": {
+            "brightness_pct": {
+              "type": "relative",
+              "operation": "add",
+              "values": [
+                10,
+                20,
+                30
+              ]
+            }
+          },
+          "description": "Zvýšení intenzity (relativní)",
+          "requires_state": true
+        },
+        {
+          "id": "brightness_relative_decrease",
+          "params": {
+            "brightness_pct": {
+              "type": "relative",
+              "operation": "subtract",
+              "values": [
+                10,
+                20,
+                30
+              ]
+            }
+          },
+          "description": "Snížení intenzity (relativní)",
+          "requires_state": true
+        }
+      ]
+    },
+    "turn_off": {
+      "service": "light.turn_off",
+      "target_domain": "light",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Vypnutí světla"
+        }
+      ]
+    },
+    "toggle": {
+      "service": "light.toggle",
+      "target_domain": "light",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Přepnutí stavu světla"
+        }
+      ]
+    }
+  },
+  "climate": {
+    "set_temperature": {
+      "service": "climate.set_temperature",
+      "target_domain": "climate",
+      "parameter_combinations": [
+        {
+          "id": "absolute",
+          "params": {
+            "temperature": {
+              "type": "choice",
+              "values": [
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26
+              ]
+            }
+          },
+          "description": "Nastavení absolutní teploty"
+        },
+        {
+          "id": "relative_increase",
+          "params": {
+            "temperature": {
+              "type": "relative",
+              "operation": "add",
+              "values": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          "description": "Zvýšení teploty (relativní)",
+          "requires_state": true
+        },
+        {
+          "id": "relative_decrease",
+          "params": {
+            "temperature": {
+              "type": "relative",
+              "operation": "subtract",
+              "values": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          "description": "Snížení teploty (relativní)",
+          "requires_state": true
+        }
+      ]
+    },
+    "set_hvac_mode": {
+      "service": "climate.set_hvac_mode",
+      "target_domain": "climate",
+      "parameter_combinations": [
+        {
+          "id": "heat",
+          "params": {
+            "hvac_mode": {
+              "type": "fixed",
+              "value": "heat"
+            }
+          },
+          "description": "Zapnutí topení"
+        },
+        {
+          "id": "off",
+          "params": {
+            "hvac_mode": {
+              "type": "fixed",
+              "value": "off"
+            }
+          },
+          "description": "Vypnutí topení"
+        }
+      ]
+    }
+  },
+  "cover": {
+    "open_cover": {
+      "service": "cover.open_cover",
+      "target_domain": "cover",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Otevření žaluzie/rolety"
+        }
+      ]
+    },
+    "close_cover": {
+      "service": "cover.close_cover",
+      "target_domain": "cover",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Zavření žaluzie/rolety"
+        }
+      ]
+    },
+    "set_cover_position": {
+      "service": "cover.set_cover_position",
+      "target_domain": "cover",
+      "parameter_combinations": [
+        {
+          "id": "position",
+          "params": {
+            "position": {
+              "type": "choice",
+              "values": [
+                0,
+                10,
+                25,
+                50,
+                75,
+                90,
+                100
+              ]
+            }
+          },
+          "description": "Nastavení pozice v procentech"
+        }
+      ]
+    },
+    "stop_cover": {
+      "service": "cover.stop_cover",
+      "target_domain": "cover",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Zastavení žaluzie/rolety"
+        }
+      ]
+    }
+  },
+  "switch": {
+    "turn_on": {
+      "service": "switch.turn_on",
+      "target_domain": "switch",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Zapnutí spínače"
+        }
+      ]
+    },
+    "turn_off": {
+      "service": "switch.turn_off",
+      "target_domain": "switch",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Vypnutí spínače"
+        }
+      ]
+    },
+    "toggle": {
+      "service": "switch.toggle",
+      "target_domain": "switch",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Přepnutí stavu spínače"
+        }
+      ]
+    }
+  },
+  "fan": {
+    "turn_on": {
+      "service": "fan.turn_on",
+      "target_domain": "fan",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Základní zapnutí ventilátoru"
+        },
+        {
+          "id": "with_speed",
+          "params": {
+            "percentage": {
+              "type": "choice",
+              "values": [
+                25,
+                50,
+                75,
+                100
+              ]
+            }
+          },
+          "description": "Zapnutí s rychlostí"
+        }
+      ]
+    },
+    "turn_off": {
+      "service": "fan.turn_off",
+      "target_domain": "fan",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Vypnutí ventilátoru"
+        }
+      ]
+    },
+    "set_percentage": {
+      "service": "fan.set_percentage",
+      "target_domain": "fan",
+      "parameter_combinations": [
+        {
+          "id": "speed",
+          "params": {
+            "percentage": {
+              "type": "choice",
+              "values": [
+                10,
+                25,
+                50,
+                75,
+                100
+              ]
+            }
+          },
+          "description": "Nastavení rychlosti ventilátoru"
+        }
+      ]
+    }
+  },
+  "input_boolean": {
+    "turn_on": {
+      "service": "input_boolean.turn_on",
+      "target_domain": "input_boolean",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Zapnutí boolean pomocníka"
+        }
+      ]
+    },
+    "turn_off": {
+      "service": "input_boolean.turn_off",
+      "target_domain": "input_boolean",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Vypnutí boolean pomocníka"
+        }
+      ]
+    },
+    "toggle": {
+      "service": "input_boolean.toggle",
+      "target_domain": "input_boolean",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Přepnutí boolean pomocníka"
+        }
+      ]
+    }
+  },
+  "input_number": {
+    "set_value": {
+      "service": "input_number.set_value",
+      "target_domain": "input_number",
+      "parameter_combinations": [
+        {
+          "id": "absolute",
+          "params": {
+            "value": {
+              "type": "choice",
+              "values": [
+                0,
+                5,
+                10,
+                15,
+                20,
+                25,
+                30,
+                35,
+                40,
+                45,
+                50,
+                55,
+                60,
+                65,
+                70,
+                75,
+                80,
+                85,
+                90,
+                95,
+                100
+              ]
+            }
+          },
+          "description": "Nastavení absolutní hodnoty"
+        }
+      ]
+    },
+    "increment": {
+      "service": "input_number.increment",
+      "target_domain": "input_number",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Zvýšení hodnoty o krok"
+        }
+      ]
+    },
+    "decrement": {
+      "service": "input_number.decrement",
+      "target_domain": "input_number",
+      "parameter_combinations": [
+        {
+          "id": "basic",
+          "params": {},
+          "description": "Snížení hodnoty o krok"
+        }
+      ]
+    }
+  }
+}
