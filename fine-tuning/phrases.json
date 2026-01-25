@@ -1,0 +1,502 @@
+{
+  "light": {
+    "turn_on": {
+      "simple": [
+        "zapni",
+        "rozsvit",
+        "rozsviť",
+        "dej světlo",
+        "nasvit"
+      ],
+      "with_location": [
+        "zapni v kuchyni",
+        "rozsvit v obýváku",
+        "rozsviť v ložnici",
+        "dej světlo v koupelně"
+      ],
+      "with_brightness": [
+        "zapni na {brightness}%",
+        "rozsvit na {brightness} procent",
+        "dej světlo na {brightness}%",
+        "nastav na {brightness}%"
+      ],
+      "with_brightness_and_location": [
+        "zapni v kuchyni na {brightness}%",
+        "rozsvit v obýváku na {brightness} procent"
+      ],
+      "with_brightness_specific": [
+        "zapni stropní světlo na {brightness}%",
+        "rozsvit lampičku na {brightness}%",
+        "dej LED na {brightness} procent"
+      ],
+      "increase": [
+        "zvyš světlo",
+        "zesvětli",
+        "přidej světlo",
+        "zesil světlo",
+        "víc světla"
+      ],
+      "decrease": [
+        "sniž světlo",
+        "ztlum",
+        "zeslab světlo",
+        "uber světlo",
+        "míň světla"
+      ]
+    },
+    "turn_off": {
+      "simple": [
+        "zhasni",
+        "vypni",
+        "smaž",
+        "zhásni",
+        "pohas"
+      ]
+    },
+    "toggle": {
+      "simple": [
+        "přepni",
+        "přepni světlo",
+        "změň stav"
+      ]
+    }
+  },
+
+  "climate": {
+    "set_temperature": {
+      "absolute_with_location": [
+        "nastav {location} na {temperature} stupňů",
+        "zahřej {location} na {temperature}°C",
+        "vytop {location} na {temperature}",
+        "dej {location} na {temperature} stupňů",
+        "změň teplotu {location} na {temperature}",
+        "nastav termostat {location} na {temperature}",
+        "udělej {location} {temperature} stupňů",
+        "přidej {location} na {temperature}°C"
+      ],
+      "absolute_without_location": [
+        "nastav na {temperature} stupňů",
+        "zahřej na {temperature}°C",
+        "dej na {temperature}",
+        "nastav teplotu na {temperature}",
+        "změň na {temperature} stupňů"
+      ],
+      "increase_with_location": [
+        "zvyš teplotu {location}",
+        "přidej teplotu {location}",
+        "zahřej {location}",
+        "přitop {location}",
+        "víc tepla {location}",
+        "zatop {location}",
+        "přidej teplo {location}"
+      ],
+      "increase_without_location": [
+        "zvyš teplotu",
+        "přidej teplotu",
+        "zahřej",
+        "přitop",
+        "víc tepla",
+        "zatop",
+        "přidej teplo"
+      ],
+      "decrease_with_location": [
+        "sniž teplotu {location}",
+        "uber teplotu {location}",
+        "ochlař {location}",
+        "míň tepla {location}",
+        "uber teplo {location}"
+      ],
+      "decrease_without_location": [
+        "sniž teplotu",
+        "uber teplotu",
+        "ochlař",
+        "míň tepla",
+        "uber teplo"
+      ]
+    },
+    "set_hvac_mode": {
+      "heat_with_location": [
+        "zapni topení {location}",
+        "spusť topení {location}",
+        "aktivuj topení {location}",
+        "roztop {location}",
+        "zapni termostat {location}"
+      ],
+      "heat_without_location": [
+        "zapni topení",
+        "spusť topení",
+        "aktivuj topení",
+        "roztop",
+        "zapni termostat"
+      ],
+      "off_with_location": [
+        "vypni topení {location}",
+        "zastav topení {location}",
+        "vypni termostat {location}",
+        "ukonči topení {location}"
+      ],
+      "off_without_location": [
+        "vypni topení",
+        "zastav topení",
+        "vypni termostat",
+        "ukonči topení"
+      ]
+    }
+  },
+
+  "cover": {
+    "open_cover": {
+      "with_location": [
+        "otevři žaluzie {location}",
+        "vytáhni žaluzie {location}",
+        "zvedni roletu {location}",
+        "vyjeď roletu {location}",
+        "otevři rolety {location}",
+        "vytáhni žaluzii {location}",
+        "otevři bránu",
+        "otevři garáž",
+        "otevři vrata",
+        "vyjeď markýzu {location}"
+      ],
+      "without_location": [
+        "otevři žaluzie",
+        "vytáhni žaluzie",
+        "zvedni roletu",
+        "otevři rolety",
+        "otevři bránu",
+        "otevři garáž",
+        "otevři vrata"
+      ]
+    },
+    "close_cover": {
+      "with_location": [
+        "zavři žaluzie {location}",
+        "spusť žaluzie {location}",
+        "stáhni roletu {location}",
+        "zajeď roletu {location}",
+        "zavři rolety {location}",
+        "stáhni žaluzii {location}",
+        "zavři bránu",
+        "zavři garáž",
+        "zavři vrata",
+        "zajeď markýzu {location}"
+      ],
+      "without_location": [
+        "zavři žaluzie",
+        "spusť žaluzie",
+        "stáhni roletu",
+        "zavři rolety",
+        "zavři bránu",
+        "zavři garáž",
+        "zavři vrata"
+      ]
+    },
+    "set_cover_position": {
+      "with_location": [
+        "nastav žaluzie {location} na {position}%",
+        "dej žaluzie {location} na {position} procent",
+        "otevři žaluzie {location} na {position}%",
+        "vytáhni roletu {location} na {position}%",
+        "nastav rolety {location} na {position}%"
+      ],
+      "without_location": [
+        "nastav žaluzie na {position}%",
+        "dej žaluzie na {position} procent",
+        "otevři roletu na {position}%"
+      ]
+    },
+    "stop_cover": {
+      "with_type": [
+        "zastav žaluzie",
+        "stop roletu",
+        "zadrž žaluzie",
+        "zastav bránu",
+        "stop vrata"
+      ],
+      "simple": [
+        "zastav",
+        "stop",
+        "zadrž"
+      ]
+    }
+  },
+
+  "switch": {
+    "turn_on": {
+      "with_type_and_location": [
+        "zapni {switch_type} {location}",
+        "spusť {switch_type} {location}",
+        "aktivuj {switch_type} {location}",
+        "rozjeď {switch_type} {location}",
+        "dej {switch_type} {location}"
+      ],
+      "with_type_only": [
+        "zapni {switch_type}",
+        "spusť {switch_type}",
+        "aktivuj {switch_type}",
+        "rozjeď {switch_type}",
+        "dej {switch_type}"
+      ],
+      "generic": [
+        "zapni",
+        "spusť",
+        "aktivuj",
+        "rozjeď"
+      ]
+    },
+    "turn_off": {
+      "with_type_and_location": [
+        "vypni {switch_type} {location}",
+        "zastav {switch_type} {location}",
+        "deaktivuj {switch_type} {location}",
+        "vyp {switch_type} {location}",
+        "ukonči {switch_type} {location}"
+      ],
+      "with_type_only": [
+        "vypni {switch_type}",
+        "zastav {switch_type}",
+        "deaktivuj {switch_type}",
+        "vyp {switch_type}",
+        "ukonči {switch_type}"
+      ],
+      "generic": [
+        "vypni",
+        "zastav",
+        "deaktivuj",
+        "vyp"
+      ]
+    },
+    "toggle": {
+      "with_type": [
+        "přepni {switch_type}",
+        "přehoď {switch_type}",
+        "změň stav {switch_type}"
+      ],
+      "generic": [
+        "přepni",
+        "přehoď",
+        "změň stav"
+      ]
+    }
+  },
+
+  "fan": {
+    "turn_on": {
+      "with_location": [
+        "zapni ventilátor {location}",
+        "rozjeď větrák {location}",
+        "spusť větrání {location}",
+        "aktivuj ventilátor {location}",
+        "dej ventilátor {location}",
+        "zapni odtah {location}"
+      ],
+      "without_location": [
+        "zapni ventilátor",
+        "rozjeď větrák",
+        "spusť větrání",
+        "zapni odtah"
+      ],
+      "with_location_and_speed": [
+        "zapni ventilátor {location} na {percentage}%",
+        "rozjeď větrák {location} na {percentage} procent",
+        "spusť větrání {location} na {percentage}%",
+        "nastav ventilátor {location} na {percentage}%"
+      ],
+      "with_speed_only": [
+        "zapni ventilátor na {percentage}%",
+        "rozjeď větrák na {percentage} procent"
+      ]
+    },
+    "turn_off": {
+      "with_location": [
+        "vypni ventilátor {location}",
+        "zastav větrák {location}",
+        "vypni větrání {location}",
+        "vypni odtah {location}",
+        "zastav ventilátor {location}"
+      ],
+      "without_location": [
+        "vypni ventilátor",
+        "zastav větrák",
+        "vypni větrání",
+        "vypni odtah"
+      ]
+    },
+    "set_percentage": {
+      "with_location": [
+        "nastav ventilátor {location} na {percentage}%",
+        "změň rychlost ventilátoru {location} na {percentage}%",
+        "dej větrák {location} na {percentage} procent",
+        "přidej ventilátor {location} na {percentage}%",
+        "uber větrák {location} na {percentage}%"
+      ],
+      "without_location": [
+        "nastav ventilátor na {percentage}%",
+        "změň rychlost na {percentage}%",
+        "dej na {percentage} procent"
+      ]
+    }
+  },
+
+  "input_boolean": {
+    "turn_on": {
+      "with_name": [
+        "zapni {boolean_name}",
+        "aktivuj {boolean_name}",
+        "povol {boolean_name}",
+        "spusť {boolean_name}",
+        "rozjeď {boolean_name}"
+      ],
+      "with_type": [
+        "zapni automatizaci {name}",
+        "aktivuj režim {name}",
+        "povol {name}",
+        "zapni {name}"
+      ],
+      "generic": [
+        "zapni",
+        "aktivuj",
+        "povol"
+      ]
+    },
+    "turn_off": {
+      "with_name": [
+        "vypni {boolean_name}",
+        "deaktivuj {boolean_name}",
+        "zakaž {boolean_name}",
+        "zastav {boolean_name}",
+        "ukonči {boolean_name}"
+      ],
+      "with_type": [
+        "vypni automatizaci {name}",
+        "deaktivuj režim {name}",
+        "zakaž {name}",
+        "vypni {name}"
+      ],
+      "generic": [
+        "vypni",
+        "deaktivuj",
+        "zakaž"
+      ]
+    },
+    "toggle": {
+      "with_name": [
+        "přepni {boolean_name}",
+        "přehoď {boolean_name}",
+        "změň stav {boolean_name}"
+      ],
+      "generic": [
+        "přepni",
+        "přehoď"
+      ]
+    }
+  },
+
+  "input_number": {
+    "set_value": {
+      "with_name": [
+        "nastav {number_name} na {value}",
+        "změň {number_name} na {value}",
+        "dej {number_name} na {value}",
+        "nastavím {number_name} na {value}"
+      ],
+      "temperature_specific": [
+        "nastav teplotu {name} na {value} stupňů",
+        "změň teplotu {name} na {value}°C",
+        "dej {name} na {value} stupňů",
+        "nastav {name} na {value} stupňů"
+      ],
+      "generic": [
+        "nastav na {value}",
+        "změň na {value}",
+        "dej na {value}"
+      ]
+    },
+    "increment": {
+      "with_name": [
+        "zvyš {number_name}",
+        "přidej {number_name}",
+        "zvětši {number_name}",
+        "zvyš hodnotu {number_name}",
+        "přidej krok {number_name}"
+      ],
+      "generic": [
+        "zvyš",
+        "přidej",
+        "zvětši",
+        "zvyš hodnotu"
+      ]
+    },
+    "decrement": {
+      "with_name": [
+        "sniž {number_name}",
+        "uber {number_name}",
+        "zmenši {number_name}",
+        "sniž hodnotu {number_name}",
+        "uber krok {number_name}"
+      ],
+      "generic": [
+        "sniž",
+        "uber",
+        "zmenši",
+        "sniž hodnotu"
+      ]
+    }
+  },
+
+  "locations": [
+    "v kuchyni",
+    "v obýváku",
+    "v ložnici",
+    "v koupelně",
+    "na chodbě",
+    "v garáži",
+    "v dílně",
+    "na zahradě"
+  ],
+
+  "switch_types": [
+    "vypínač",
+    "spínač",
+    "zásuvku",
+    "čerpadlo",
+    "vrata",
+    "bránu",
+    "garáž",
+    "ohřívač",
+    "bojler",
+    "ventilátory",
+    "ventilátor",
+    "cirkulaci",
+    "automatizaci",
+    "režim",
+    "osvětlení",
+    "zařízení"
+  ],
+
+  "boolean_types": [
+    "režim dovolená",
+    "režim noc",
+    "režim doma",
+    "režim pryč",
+    "bojler",
+    "automatizaci topení",
+    "automatizaci světel",
+    "automatizaci žaluzií",
+    "automatizaci",
+    "cirkulaci",
+    "hlídání",
+    "alarm"
+  ],
+
+  "number_names": [
+    "teplotu bojleru",
+    "bojler",
+    "limit topení",
+    "teplotu",
+    "intenzitu světla",
+    "výchozí intenzitu",
+    "hodnotu",
+    "číslo"
+  ]
+}
