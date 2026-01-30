@@ -1,80 +1,81 @@
 #!/bin/bash
 set -e
 
-echo "╔════════════════════════════════════════╗"
-echo "║   🚀 Fast Ollama LXC Setup v1.2        ║"
-echo "║   Optimized for CZ/SK Community        ║"
-echo "╚════════════════════════════════════════╝"
-echo
+# --- NASTAVENÍ BAREV ---
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # Bez barvy
 
-# ============================================
-# KONFIGURACE
-# ============================================
+# --- POMOCNÉ FUNKCE ---
+info() { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn() { echo -e "${YELLOW}[POZOR]${NC} $1"; }
+error() { echo -e "${RED}[CHYBA]${NC} $1"; }
+ask() { echo -ne "${YELLOW}[DOTAZ]${NC} $1"; }
 
-HOSTNAME="ollama-lxc"
+# --- ÚVODNÍ OBRAZOVKA ---
+clear
+echo -e "${YELLOW}╔════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${YELLOW}║         🤖 CZ/SK OLLAMA LXC INSTALLER v1.5                ║${NC}"
+echo -e "${YELLOW}╚════════════════════════════════════════════════════════════╝${NC}"
+echo -e "Tento skript vytvoří kontejner pro provoz lokální AI Ollama."
+echo -e "Tip: Pro výchozí hodnotu stačí stisknout ${GREEN}[ENTER]${NC}.\n"
+
+# --- KONTROLA ROOT PRÁV ---
+if [ "$(id -u)" -ne 0 ]; then
+    error "Tento skript musí běžet pod uživatelem root (v Shellu Proxmoxu)!"
+    exit 1
+fi
+
+# --- INTERAKTIVNÍ DOTAZY ---
+
+# 1. ID Kontejneru
+NEXTID=$(pvesh get /cluster/nextid)
+ask "Zadejte ID pro nový kontejner (výchozí $NEXTID): "
+read input_id
+CTID=${input_id:-$NEXTID}
+
+if pct status $CTID >/dev/null 2>&1; then
+    error "ID $CTID již existuje! Zvolte prosím jiné."
+    exit 1
+fi
+
+# 2. Úložiště
+STORAGE_AUTO=$(pvesm status -content rootdir | awk 'NR>1 {print $1}' | head -n 1)
+ask "Na které úložiště instalovat? (výchozí $STORAGE_AUTO): "
+read input_storage
+STORAGE=${input_storage:-$STORAGE_AUTO}
+
+# 3. RAM a Disk
+ask "Kolik GB RAM přidělit? (doporučeno 8): "
+read input_ram
+RAM_GB=${input_ram:-8}
+
+ask "Kolik GB místa na disku? (doporučeno 20): "
+read input_disk
+DISK_GB=${input_disk:-20}
+
+# --- SHRNUTÍ A POTVRZENÍ ---
+echo -e "\n${GREEN}--- PLÁN INSTALACE ---${NC}"
+echo -e "ID: $CTID | Úložiště: $STORAGE | RAM: ${RAM_GB}GB | Disk: ${DISK_GB}GB"
+echo -e "${GREEN}----------------------${NC}\n"
+
+# --- SAMOTNÁ INSTALACE ---
+HOSTNAME="ollama-server"
 ROOT_PASSWORD="ollama123"
-RAM_GB=8
-DISK_GB=20
-TEMPLATE="debian-12-standard_12.12-1_amd64.tar.zst"
+TEMPLATE_NAME="debian-12-standard_12.12-1_amd64.tar.zst"
 
-# ============================================
-# AUTO-DETEKCE VOLNÉHO CTID
-# ============================================
+info "Aktualizuji repozitáře Proxmoxu..."
+apt update >/dev/null 2>&1 || true
 
-echo "🔍 Hledám volné Container ID..."
-CTID=100
-while pct status $CTID >/dev/null 2>&1; do
-    CTID=$((CTID + 1))
-    if [ $CTID -gt 999 ]; then
-        echo "❌ Error: No free Container ID found (100-999)!"
-        exit 1
-    fi
-done
-echo "✅ Found free CTID: $CTID"
-
-# ============================================
-# AUTO-DETEKCE STORAGE
-# ============================================
-
-echo "🔍 Detecting storage..."
-STORAGE=$(pvesm status -content rootdir | awk 'NR>1 {print $1}' | head -n 1)
-if [ -z "$STORAGE" ]; then
-    STORAGE="local-lvm"
-fi
-echo "✅ Using storage: $STORAGE"
-
-# ============================================
-# INSTALACE DEPENDENCIES
-# ============================================
-
-echo
-echo "📦 Installing Proxmox dependencies..."
-apt update 2>/dev/null || true
-apt install -y zstd curl wget 2>/dev/null || true
-
-# ============================================
-# STAŽENÍ TEMPLATE
-# ============================================
-
-if [ ! -f "/var/lib/vz/template/cache/$TEMPLATE" ]; then
-    echo "📥 Downloading Debian 12 template..."
-    pveam download local $TEMPLATE
+info "Kontrola šablony Debian 12..."
+if [ ! -f "/var/lib/vz/template/cache/$TEMPLATE_NAME" ]; then
+    info "Stahuji šablonu Debian 12..."
+    pveam download local $TEMPLATE_NAME
 fi
 
-# ============================================
-# VYTVOŘENÍ LXC
-# ============================================
-
-echo
-echo "📦 Creating LXC container..."
-echo "  CTID:     $CTID"
-echo "  Hostname: $HOSTNAME"
-echo "  RAM:      ${RAM_GB}GB"
-echo "  Disk:     ${DISK_GB}GB"
-echo "  Storage:  $STORAGE"
-echo
-
-pct create $CTID local:vztmpl/$TEMPLATE \
+info "Vytvářím LXC kontejner $CTID..."
+pct create $CTID local:vztmpl/$TEMPLATE_NAME \
     --hostname $HOSTNAME \
     --password $ROOT_PASSWORD \
     --memory $((RAM_GB * 1024)) \
@@ -86,79 +87,29 @@ pct create $CTID local:vztmpl/$TEMPLATE \
     --unprivileged 0 \
     --onboot 1
 
-echo "▶️ Starting container..."
+info "Startuji kontejner..."
 pct start $CTID
 sleep 10
 
-# ============================================
-# INSTALACE V KONTEJNERU
-# ============================================
-
-echo "🔧 Installing system tools..."
-pct exec $CTID -- bash -c "apt update && apt install -y curl zstd jq pciutils"
-
-echo "🤖 Installing Ollama..."
+info "Instaluji Ollama prostředí (může to chvíli trvat)..."
+pct exec $CTID -- bash -c "apt update && apt install -y curl jq"
 pct exec $CTID -- bash -c "curl -fsSL https://ollama.com/install.sh | sh"
 
-echo "⚙️ Configuring Ollama..."
+info "Nastavuji síťový přístup pro Home Assistanta..."
 pct exec $CTID -- mkdir -p /etc/systemd/system/ollama.service.d
-pct exec $CTID -- bash -c 'cat > /etc/systemd/system/ollama.service.d/override.conf <<EOF
-[Service]
-Environment="OLLAMA_KEEP_ALIVE=24h"
-Environment="OLLAMA_HOST=0.0.0.0:11434"
-EOF'
-
+pct exec $CTID -- bash -c 'echo -e "[Service]\nEnvironment=\"OLLAMA_HOST=0.0.0.0:11434\"\nEnvironment=\"OLLAMA_KEEP_ALIVE=24h\"" > /etc/systemd/system/ollama.service.d/override.conf'
 pct exec $CTID -- systemctl daemon-reload
 pct exec $CTID -- systemctl restart ollama
-sleep 5
 
-# ============================================
-# STAŽENÍ MODELU
-# ============================================
+info "Stahuji základní model Llama 3.2:3b..."
+pct exec $CTID -- ollama pull llama3.2:3b
 
-echo
-echo "📥 Downloading llama3.1:8b model..."
-echo "⏳ This may take several minutes..."
-pct exec $CTID -- ollama pull llama3.1:8b
-echo "✅ Model downloaded successfully"
-
-# ============================================
-# ZÍSKÁNÍ IP ADRESY
-# ============================================
-
-echo
-echo "🔍 Getting container IP..."
-sleep 2
+# --- ZÁVĚR ---
 CTIP=$(pct exec $CTID -- hostname -I | awk '{print $1}')
 
-# ============================================
-# ZÁVĚR
-# ============================================
-
-echo
-echo "╔════════════════════════════════════════╗"
-echo "║   ✅ Installation Complete!            ║"
-echo "╚════════════════════════════════════════╝"
-echo
-echo "📋 Container Details:"
-echo "  Container ID:  $CTID"
-echo "  Hostname:      $HOSTNAME"
-echo "  IP Address:    $CTIP"
-echo "  Password:      $ROOT_PASSWORD"
-echo "  Model:         llama3.1:8b"
-echo
-echo "🌐 Ollama API Endpoint:"
-echo "  http://$CTIP:11434"
-echo
-echo "💬 To start chatting:"
-echo "  1. Connect via SSH: ssh root@$CTIP"
-echo "  2. Run: ollama run llama3.1:8b"
-echo
-echo "🔧 To access container shell from Proxmox:"
-echo "  pct enter $CTID"
-echo
-echo "📚 Model Management:"
-echo "  List models:    ollama list"
-echo "  Delete model:   ollama rm llama3.1:8b"
-echo "  Download model: ollama pull llama3.2:3b"
-echo
+echo -e "\n${GREEN}✅ INSTALACE DOKONČENA!${NC}"
+echo -e "────────────────────────────────────────────────────────"
+echo -e "📍 IP adresa:    ${YELLOW}$CTIP${NC}"
+echo -e "🔑 Root heslo:   ${YELLOW}$ROOT_PASSWORD${NC}"
+echo -e "💬 Spuštění AI:  ${YELLOW}ssh root@$CTIP${NC} -> ${YELLOW}ollama run llama3.2:3b${NC}"
+echo -e "────────────────────────────────────────────────────────\n"
