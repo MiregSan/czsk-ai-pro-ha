@@ -88,7 +88,7 @@ pct start $CTID
 sleep 10
 
 info "Instaluji Ollama prostředí (může to chvíli trvat)..."
-pct exec $CTID -- bash -c "apt update && apt install -y curl jq"
+pct exec $CTID -- bash -c "apt update && apt install -y curl jq zstd"
 pct exec $CTID -- bash -c "curl -fsSL https://ollama.com/install.sh | sh"
 
 info "Nastavuji síťový přístup pro Home Assistanta..."
@@ -97,8 +97,8 @@ pct exec $CTID -- bash -c 'echo -e "[Service]\nEnvironment=\"OLLAMA_HOST=0.0.0.0
 pct exec $CTID -- systemctl daemon-reload
 pct exec $CTID -- systemctl restart ollama
 
-info "Stahuji základní model Llama 3.2:3b..."
-pct exec $CTID -- ollama pull llama3.2:3b
+info "Stahuji základní model Gemma3:4b..."
+pct exec $CTID -- ollama pull gemma3:4b
 
 # --- ZÁVĚR ---
 CTIP=$(pct exec $CTID -- hostname -I | awk '{print $1}')
