@@ -32,27 +32,23 @@ fi
 # 1. ID Kontejneru
 NEXTID=$(pvesh get /cluster/nextid)
 ask "Zadejte ID pro nový kontejner (výchozí $NEXTID): "
-read input_id
+read input_id </dev/tty
 CTID=${input_id:-$NEXTID}
-
-if pct status $CTID >/dev/null 2>&1; then
-    error "ID $CTID již existuje! Zvolte prosím jiné."
-    exit 1
-fi
 
 # 2. Úložiště
 STORAGE_AUTO=$(pvesm status -content rootdir | awk 'NR>1 {print $1}' | head -n 1)
 ask "Na které úložiště instalovat? (výchozí $STORAGE_AUTO): "
-read input_storage
+read input_storage </dev/tty
 STORAGE=${input_storage:-$STORAGE_AUTO}
 
-# 3. RAM a Disk
+# 3. RAM
 ask "Kolik GB RAM přidělit? (doporučeno 8): "
-read input_ram
+read input_ram </dev/tty
 RAM_GB=${input_ram:-8}
 
+# 4. Disk
 ask "Kolik GB místa na disku? (doporučeno 20): "
-read input_disk
+read input_disk </dev/tty
 DISK_GB=${input_disk:-20}
 
 # --- SHRNUTÍ A POTVRZENÍ ---
